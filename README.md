@@ -29,11 +29,11 @@ Check the schematics for the rest of the passives
 
 
 ### Architecture
-Every digit of the display is composed by a Nixie tube (IN-8-2) driven by a decimal decoder designed for directly drives this kind of gas-filled cold-cathode indicators (MH74141) which input is supplied by a 4-bit D Latch (SN74LS77).
+Every digit of the display is composed by a Nixie tube (IN-8-2) driven by a decimal decoder designed for directly drive this kind of gas-filled cold-cathode indicators (MH74141) which input is supplied by a 4-bit D Latch (SN74LS77).
 
-Each latch are multiplexed, with one 3-line to 8-line demux (74MH238), in order to share the 4 bit bus with all the drivers.
+Each latch is multiplexed, with one 3-line to 8-line demux (74MH238), in order to share the 4 bit bus with all the drivers.
 
-In this way it's only needed 7 bits for control the clock's display.
+In this way it's only needed 7 bits to control the clock's display.
 
 ```
                             .___.
