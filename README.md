@@ -10,6 +10,7 @@
 
  * `hardware/eagle` - PCB design and schematics
  * `hardware/docs`  - various PDF datasheets for components used
+ * `software`       - clock program
 
 ## BOM Summary
 Main components

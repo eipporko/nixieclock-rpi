@@ -1,2 +1,2 @@
 #!/bin/sh
-gcc -Wall -o blink blink.c -lwiringPi
+gcc -Wall -o clock clock.c -lwiringPi
