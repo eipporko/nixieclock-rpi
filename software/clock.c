@@ -12,7 +12,7 @@ void nixiePins(int value, int address){
   nixiePin(2, address&1);
   nixiePin(1, address&2);
   nixiePin(0, address&4);
-  
+
   nixiePin(6, value&1);
   nixiePin(5, value&2);
   nixiePin(4, value&4);
@@ -30,6 +30,17 @@ void initWiringPi() {
   }
 }
 
+void testClock() {
+  int digit = 0;
+  int address = 0;
+  for (digit = 0; digit < 10; digit++) {
+    for (address = 0; address < 6; address++)
+      nixiePins(digit, address);
+
+    delay(250);
+  }
+}
+
 int main ()
 {
   time_t now;
@@ -38,6 +49,8 @@ int main ()
   struct tm * ntm;
 
   initWiringPi();
+
+  testClock();
 
   while(1) {
     start = clock() / (CLOCKS_PER_SEC / 1000);
