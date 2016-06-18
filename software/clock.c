@@ -58,12 +58,12 @@ int main ()
     ntm = localtime (&now);
     printf ("%d : %d : %d \n", ntm->tm_hour, ntm->tm_min, ntm->tm_sec);
 
-    nixiePins(ntm->tm_hour/10, 0);
-    nixiePins(ntm->tm_hour%10, 1);
-    nixiePins(ntm->tm_min/10, 2);
-    nixiePins(ntm->tm_min%10, 3);
-    nixiePins(ntm->tm_sec/10, 4);
-    nixiePins(ntm->tm_sec%10, 5);
+    nixiePins(ntm->tm_hour/10, 5);
+    nixiePins(ntm->tm_hour%10, 4);
+    nixiePins(ntm->tm_min/10, 3);
+    nixiePins(ntm->tm_min%10, 2);
+    nixiePins(ntm->tm_sec/10, 1);
+    nixiePins(ntm->tm_sec%10, 0);
 
     stop = clock() / (CLOCKS_PER_SEC / 1000);
     delay(1000 - (stop-start));
