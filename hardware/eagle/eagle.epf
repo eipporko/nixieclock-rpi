@@ -40,7 +40,7 @@ Number=0
 
 [Win_2]
 Type="Board Editor"
-Loc="-10 -14 589 413"
+Loc="0 24 599 451"
 State=1
 Number=1
 File="nixie_clock.brd"
@@ -86,7 +86,7 @@ Layer=16
 
 [Win_3]
 Type="Schematic Editor"
-Loc="-1 -14 598 413"
+Loc="0 24 599 451"
 State=1
 Number=2
 File="nixie_clock.sch"
