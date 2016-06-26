@@ -7,6 +7,7 @@
 #define  RoAPin    11
 #define  RoBPin    12
 #define  SWPin     13
+#define  ELedPin	 14
 
 static volatile int globalCounter = 0 ;
 
@@ -14,9 +15,14 @@ unsigned char flag;
 unsigned char Last_RoB_Status;
 unsigned char Current_RoB_Status;
 
+int enableLed;
+
 void btnISR(void)
 {
 	globalCounter = 0;
+
+	enableLed = (enableLed == LOW);
+	digitalWrite(ELedPin, enableLed);
 }
 
 void rotaryDeal(void)
@@ -49,6 +55,8 @@ int main(void)
 	pinMode(SWPin, INPUT);
 	pinMode(RoAPin, INPUT);
 	pinMode(RoBPin, INPUT);
+	pinMode(ELedPin, OUTPUT);
+	digitalWrite(ELedPin, LOW);
 
 	pullUpDnControl(SWPin, PUD_UP);
 
