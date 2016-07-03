@@ -378,7 +378,7 @@ UsedLibrary="/home/oxydo/Eagle-Libraries/Eagle-Libraries/Relays/relay_meder.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="0 24 959 1051"
+Loc="55 528 854 960"
 State=2
 Number=0
 
