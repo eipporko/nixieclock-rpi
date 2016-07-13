@@ -17531,6 +17531,9 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <attribute name="OC_FARNELL" value="9411887"/>
 </part>
 <part name="J1" library="SparkFun-Boards" deviceset="RASPBERRYPI-40-PIN-GPIO" device=""/>
+<part name="D3" library="diode" deviceset="1N4004" device=""/>
+<part name="D4" library="diode" deviceset="1N4004" device=""/>
+<part name="D5" library="diode" deviceset="1N4004" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -17766,6 +17769,9 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <attribute name="MPN" x="304.8" y="187.96" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="J1" gate="G$1" x="368.3" y="111.76"/>
+<instance part="D3" gate="1" x="358.14" y="210.82" rot="R270"/>
+<instance part="D4" gate="1" x="353.06" y="210.82" rot="R270"/>
+<instance part="D5" gate="1" x="347.98" y="210.82" rot="R270"/>
 </instances>
 <busses>
 </busses>
@@ -19274,6 +19280,27 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <pinref part="SV16" gate="G$1" pin="3"/>
 <wire x1="383.54" y1="119.38" x2="477.52" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="477.52" y1="119.38" x2="480.06" y2="116.84" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$116" class="0">
+<segment>
+<pinref part="D4" gate="1" pin="C"/>
+<pinref part="ULN1" gate="G$1" pin="17"/>
+<wire x1="353.06" y1="208.28" x2="353.06" y2="203.2" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$135" class="0">
+<segment>
+<pinref part="D3" gate="1" pin="C"/>
+<pinref part="ULN1" gate="G$1" pin="18"/>
+<wire x1="358.14" y1="208.28" x2="358.14" y2="203.2" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$136" class="0">
+<segment>
+<pinref part="D5" gate="1" pin="C"/>
+<pinref part="ULN1" gate="G$1" pin="16"/>
+<wire x1="347.98" y1="208.28" x2="347.98" y2="203.2" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
