@@ -1,7 +1,134 @@
 #include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <stdlib.h>
 #include <time.h>
-#include <wiringPi.h>
 
+#include <wiringPi.h>
+#include <softPwm.h>
+
+/***********************************************************
+*  CONSTANTS
+***********************************************************/
+#define  ADDR_C_PIN         0
+#define  ADDR_B_PIN         1
+#define  ADDR_A_PIN         2
+#define  DATA_D_PIN	        3
+#define  DATA_C_PIN         4
+#define  DATA_B_PIN         5
+#define  DATA_A_PIN         6
+#define  STROBE_PIN         7
+
+#define  ROTARY_A_PIN       21
+#define  ROTARY_B_PIN       22
+#define  ROTARY_SW_PIN      23
+
+#define  LED_RED_PIN	      24
+#define  LED_GREEN_PIN      25
+#define  LED_BLUE_PIN       26
+
+#define  PIR_PIN            27
+#define  RELAY_PIN          28
+#define  UNDEFINED_PIN      29
+
+
+/***********************************************************
+*  GLOBAL VARIABLES
+***********************************************************/
+static volatile int globalCounter = 0 ;
+unsigned char Last_RoB_Status;
+unsigned char Current_RoB_Status;
+
+int enableLed = 0;
+
+int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
+                      {-1, LED_GREEN_PIN, LED_BLUE_PIN},
+                      {LED_RED_PIN, -1, LED_BLUE_PIN} };
+
+
+/***********************************************************
+*  MATHEMATIC FUNCTIONS
+***********************************************************/
+int mod(int a, int b) {
+  int r = a % b;
+  return r < 0 ? r + b : r;
+}
+
+/***********************************************************
+*  PIR & RELAY FUNCTIONS
+***********************************************************/
+void PIR(void)
+{
+    printf("PIR\n");
+}
+
+/***********************************************************
+*  ROTARY ENCODER & RGB LED FUNCTIONS
+***********************************************************/
+void btnISR(void)
+{
+  enableLed = (enableLed == 0);
+
+  printf("btnISR\n");
+}
+
+
+PI_THREAD (rotaryDeal)
+{
+  unsigned char flag;
+
+  while (1) {
+
+    Last_RoB_Status = digitalRead(ROTARY_B_PIN);
+
+    while(!digitalRead(ROTARY_A_PIN)){
+      Current_RoB_Status = digitalRead(ROTARY_B_PIN);
+      flag = 1;
+    }
+
+    if(flag == 1){
+      flag = 0;
+
+      if((Last_RoB_Status == 0)&&(Current_RoB_Status == 1)){
+        globalCounter = mod(++globalCounter, 300);
+      }
+
+      if((Last_RoB_Status == 1)&&(Current_RoB_Status == 0)){
+        globalCounter = mod(--globalCounter, 300);
+      }
+    }
+
+  }
+
+}
+
+PI_THREAD (rgbLED) {
+
+  while (1) {
+
+    if (enableLed) {
+
+      int counter = globalCounter;
+      int pos = counter/100;
+      int channelDecrease = fadeMap[pos][pos];
+      int channelIncrease = fadeMap[pos][mod(pos+1,3)];
+
+      softPwmWrite(channelIncrease, mod(counter, 100));
+      softPwmWrite(channelDecrease, 100 - mod(counter, 100));
+    }
+    else {
+      softPwmWrite(LED_RED_PIN, LOW);
+      softPwmWrite(LED_GREEN_PIN, LOW);
+      softPwmWrite(LED_BLUE_PIN, LOW);
+    }
+
+  }
+}
+
+
+/***********************************************************
+*  NIXIE CLOCK FUNCTIONS
+***********************************************************/
 void nixiePin(int pin, int value){
   if (pin != -1) {
     digitalWrite(pin, value);
@@ -9,25 +136,20 @@ void nixiePin(int pin, int value){
 }
 
 void nixiePins(int value, int address){
-  nixiePin(2, address&1);
-  nixiePin(1, address&2);
-  nixiePin(0, address&4);
+  digitalWrite(STROBE_PIN, LOW);
 
-  nixiePin(6, value&1);
-  nixiePin(5, value&2);
-  nixiePin(4, value&4);
-  nixiePin(3, value&8);
+  nixiePin(ADDR_A_PIN, address&1);
+  nixiePin(ADDR_B_PIN, address&2);
+  nixiePin(ADDR_C_PIN, address&4);
+
+  nixiePin(DATA_A_PIN, value&1);
+  nixiePin(DATA_B_PIN, value&2);
+  nixiePin(DATA_C_PIN, value&4);
+  nixiePin(DATA_D_PIN, value&8);
+
+  digitalWrite(STROBE_PIN, HIGH);
 
   delay (12); //~=85 Hz
-}
-
-void initWiringPi() {
-  wiringPiSetup();
-  int i = 0;
-  for (i = 0; i < 7; i++) {
-    pinMode(i, OUTPUT);
-    digitalWrite(i, LOW);
-  }
 }
 
 void testClock() {
@@ -35,10 +157,61 @@ void testClock() {
   int address = 0;
   for (digit = 0; digit < 10; digit++) {
     for (address = 0; address < 6; address++)
-      nixiePins(digit, address);
+    nixiePins(digit, address);
 
     delay(250);
   }
+}
+
+void initWiringPi() {
+
+  if(wiringPiSetup() < 0){
+		fprintf(stderr, "Unable to setup wiringPi:%s\n",strerror(errno));
+		exit(1);
+	}
+
+  int i = 0;
+  for (i = 0; i < 8; i++) {
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+  }
+
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, LOW);
+
+  pinMode(PIR_PIN, INPUT);
+  pinMode(ROTARY_SW_PIN, INPUT);
+  pinMode(ROTARY_A_PIN, INPUT);
+  pinMode(ROTARY_B_PIN, INPUT);
+
+  softPwmCreate (LED_RED_PIN, 0, 100);
+  softPwmCreate (LED_GREEN_PIN, 0, 100);
+  softPwmCreate (LED_BLUE_PIN, 0, 100);
+
+  pullUpDnControl(ROTARY_SW_PIN, PUD_UP);
+
+  if(wiringPiISR(ROTARY_SW_PIN, INT_EDGE_FALLING, &btnISR) < 0){
+    fprintf(stderr, "Unable to init ISR\n");
+    exit(1);
+  }
+
+  pullUpDnControl(PIR_PIN, PUD_UP);
+
+  if(wiringPiISR(PIR_PIN, INT_EDGE_RISING, &PIR) < 0){
+    fprintf(stderr, "Unable to init ISR\n");
+    exit(1);
+  }
+
+  if (piThreadCreate(rotaryDeal) != 0) {
+    printf("Thread didn't start - rotaryDeal");
+    exit(1);
+  }
+
+  if (piThreadCreate(rgbLED) != 0) {
+    printf("Thread didn't start - rgbLED");
+    exit(1);
+  }
+
 }
 
 int main ()

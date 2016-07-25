@@ -5,12 +5,12 @@
 #include <wiringPi.h>
 #include <softPwm.h>
 
-#define  RoAPin       11
-#define  RoBPin       12
-#define  SWPin        13
-#define  RedPin	      14
-#define  GreenPin     15
-#define  BluePin      16
+#define  RoAPin       21
+#define  RoBPin       22
+#define  SWPin        23
+#define  RedPin	      24
+#define  GreenPin     25
+#define  BluePin      26
 
 static volatile int globalCounter = 0 ;
 
