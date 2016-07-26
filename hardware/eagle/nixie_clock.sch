@@ -19820,7 +19820,6 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <part name="J1_5V2" library="con-molex" deviceset="22-?-02" device="27-2021"/>
 <part name="K1" library="relay" deviceset="4052" device=""/>
 <part name="D2" library="diode" deviceset="1N4004" device=""/>
-<part name="GND4" library="supply1" deviceset="GND" device=""/>
 <part name="SW1" library="SparkFun-Electromechanical" deviceset="ROTARTY_ENCODER" device=""/>
 <part name="SV15" library="con-lstb" deviceset="MA05-1" device=""/>
 <part name="SV16" library="con-lstb" deviceset="MA05-1" device=""/>
@@ -19856,6 +19855,10 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="C18" library="rcl" deviceset="CPOL-EU" device="E2.5-5" value="1uF"/>
 <part name="R8" library="rcl" deviceset="R-EU_" device="0204/7" value="4k7"/>
+<part name="R9" library="rcl" deviceset="R-EU_" device="0204/7" value="150"/>
+<part name="R10" library="rcl" deviceset="R-EU_" device="0204/7" value="100"/>
+<part name="R11" library="rcl" deviceset="R-EU_" device="0204/7" value="100"/>
+<part name="R12" library="rcl" deviceset="R-EU_" device="0204/7" value="10k"/>
 </parts>
 <sheets>
 <sheet>
@@ -20062,11 +20065,10 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <instance part="C15" gate="G$1" x="170.18" y="17.78"/>
 <instance part="J1_5V2" gate="-1" x="180.34" y="5.08" rot="R270"/>
 <instance part="J1_5V2" gate="-2" x="180.34" y="25.4" rot="R90"/>
-<instance part="K1" gate="1" x="358.14" y="144.78" rot="R180"/>
+<instance part="K1" gate="1" x="505.46" y="220.98" rot="R180"/>
 <instance part="K1" gate="2" x="208.28" y="388.62" rot="R180"/>
 <instance part="K1" gate="3" x="228.6" y="388.62" rot="MR180"/>
-<instance part="D2" gate="1" x="345.44" y="144.78" rot="R270"/>
-<instance part="GND4" gate="1" x="358.14" y="157.48" rot="R180"/>
+<instance part="D2" gate="1" x="513.08" y="220.98" rot="R270"/>
 <instance part="SW1" gate="G$1" x="294.64" y="109.22" rot="MR270"/>
 <instance part="SV15" gate="G$1" x="320.04" y="96.52" rot="R180"/>
 <instance part="SV16" gate="G$1" x="327.66" y="96.52" rot="MR180"/>
@@ -20080,7 +20082,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 </instance>
 <instance part="J1" gate="G$1" x="393.7" y="78.74"/>
 <instance part="D3" gate="1" x="485.14" y="213.36" rot="R270"/>
-<instance part="D4" gate="1" x="490.22" y="213.36" rot="R270"/>
+<instance part="D4" gate="1" x="490.22" y="220.98" rot="R270"/>
 <instance part="D5" gate="1" x="495.3" y="213.36" rot="R270"/>
 <instance part="C13" gate="G$1" x="449.58" y="15.24" rot="R180">
 <attribute name="OC_FARNELL" x="449.58" y="15.24" size="1.778" layer="96" display="off"/>
@@ -20100,10 +20102,14 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <attribute name="MF" x="469.9" y="15.24" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="469.9" y="15.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="R7" gate="G$1" x="513.08" y="200.66"/>
+<instance part="R7" gate="G$1" x="515.62" y="200.66"/>
 <instance part="GND1" gate="1" x="350.52" y="60.96"/>
 <instance part="C18" gate="G$1" x="340.36" y="76.2"/>
 <instance part="R8" gate="G$1" x="332.74" y="76.2" rot="R90"/>
+<instance part="R9" gate="G$1" x="485.14" y="231.14" rot="R90"/>
+<instance part="R10" gate="G$1" x="490.22" y="243.84" rot="R90"/>
+<instance part="R11" gate="G$1" x="495.3" y="231.14" rot="R90"/>
+<instance part="R12" gate="G$1" x="520.7" y="208.28"/>
 </instances>
 <busses>
 </busses>
@@ -20562,15 +20568,6 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="469.9" y1="7.62" x2="477.52" y2="7.62" width="0.1524" layer="91"/>
 <wire x1="469.9" y1="12.7" x2="469.9" y2="7.62" width="0.1524" layer="91"/>
 <junction x="469.9" y="7.62"/>
-</segment>
-<segment>
-<pinref part="D2" gate="1" pin="A"/>
-<pinref part="K1" gate="1" pin="2"/>
-<wire x1="345.44" y1="147.32" x2="345.44" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="345.44" y1="149.86" x2="358.14" y2="149.86" width="0.1524" layer="91"/>
-<pinref part="GND4" gate="1" pin="GND"/>
-<wire x1="358.14" y1="149.86" x2="358.14" y2="154.94" width="0.1524" layer="91"/>
-<junction x="358.14" y="149.86"/>
 </segment>
 <segment>
 <pinref part="ULN1" gate="G$1" pin="9"/>
@@ -21433,7 +21430,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <segment>
 <pinref part="D4" gate="1" pin="C"/>
 <pinref part="ULN1" gate="G$1" pin="17"/>
-<wire x1="490.22" y1="210.82" x2="490.22" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="490.22" y1="218.44" x2="490.22" y2="187.96" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$135" class="0">
@@ -21490,8 +21487,152 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="424.18" y1="66.04" x2="408.94" y2="66.04" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$145" class="0">
+<net name="N$140" class="0">
 <segment>
+<pinref part="IC13" gate="A" pin="G"/>
+<pinref part="IC13" gate="A" pin="CLR"/>
+<wire x1="436.88" y1="200.66" x2="439.42" y2="200.66" width="0.1524" layer="91"/>
+<pinref part="ULN1" gate="G$1" pin="15"/>
+<wire x1="439.42" y1="200.66" x2="500.38" y2="200.66" width="0.1524" layer="91"/>
+<wire x1="500.38" y1="200.66" x2="500.38" y2="187.96" width="0.1524" layer="91"/>
+<junction x="439.42" y="200.66"/>
+<pinref part="R7" gate="G$1" pin="1"/>
+<wire x1="500.38" y1="200.66" x2="510.54" y2="200.66" width="0.1524" layer="91"/>
+<junction x="500.38" y="200.66"/>
+</segment>
+</net>
+<net name="N$146" class="0">
+<segment>
+<pinref part="IC15" gate="A" pin="12C"/>
+<pinref part="IC15" gate="A" pin="34C"/>
+<wire x1="403.86" y1="200.66" x2="406.4" y2="200.66" width="0.1524" layer="91"/>
+<wire x1="406.4" y1="200.66" x2="406.4" y2="170.18" width="0.1524" layer="91"/>
+<wire x1="406.4" y1="170.18" x2="447.04" y2="170.18" width="0.1524" layer="91"/>
+<junction x="406.4" y="200.66"/>
+<pinref part="ULN1" gate="G$1" pin="4"/>
+<wire x1="447.04" y1="73.66" x2="500.38" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="500.38" y1="73.66" x2="500.38" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="447.04" y1="170.18" x2="447.04" y2="73.66" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP4"/>
+<wire x1="408.94" y1="73.66" x2="447.04" y2="73.66" width="0.1524" layer="91"/>
+<junction x="447.04" y="73.66"/>
+</segment>
+</net>
+<net name="N$149" class="0">
+<segment>
+<pinref part="J1" gate="G$1" pin="GP20"/>
+<wire x1="370.84" y1="121.92" x2="370.84" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="370.84" y1="76.2" x2="378.46" y2="76.2" width="0.1524" layer="91"/>
+<pinref part="ULN1" gate="G$1" pin="5"/>
+<wire x1="370.84" y1="121.92" x2="505.46" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="505.46" y1="121.92" x2="505.46" y2="160.02" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$124" class="0">
+<segment>
+<pinref part="ULN1" gate="G$1" pin="1"/>
+<wire x1="485.14" y1="160.02" x2="485.14" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="485.14" y1="129.54" x2="363.22" y2="129.54" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP19"/>
+<wire x1="363.22" y1="129.54" x2="363.22" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="363.22" y1="78.74" x2="378.46" y2="78.74" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$127" class="0">
+<segment>
+<pinref part="ULN1" gate="G$1" pin="2"/>
+<wire x1="490.22" y1="160.02" x2="490.22" y2="127" width="0.1524" layer="91"/>
+<wire x1="490.22" y1="127" x2="365.76" y2="127" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP26"/>
+<wire x1="365.76" y1="127" x2="365.76" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="365.76" y1="71.12" x2="378.46" y2="71.12" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$129" class="0">
+<segment>
+<pinref part="ULN1" gate="G$1" pin="3"/>
+<wire x1="495.3" y1="160.02" x2="495.3" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="495.3" y1="124.46" x2="368.3" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP12"/>
+<wire x1="368.3" y1="124.46" x2="368.3" y2="86.36" width="0.1524" layer="91"/>
+<wire x1="368.3" y1="86.36" x2="378.46" y2="86.36" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$130" class="0">
+<segment>
+<pinref part="SV16" gate="G$1" pin="3"/>
+<wire x1="335.28" y1="96.52" x2="340.36" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="340.36" y1="96.52" x2="340.36" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP13"/>
+<wire x1="340.36" y1="83.82" x2="378.46" y2="83.82" width="0.1524" layer="91"/>
+<pinref part="C18" gate="G$1" pin="+"/>
+<wire x1="340.36" y1="78.74" x2="340.36" y2="83.82" width="0.1524" layer="91"/>
+<junction x="340.36" y="83.82"/>
+<wire x1="340.36" y1="83.82" x2="332.74" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="332.74" y1="83.82" x2="332.74" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="R8" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$137" class="0">
+<segment>
+<pinref part="SV16" gate="G$1" pin="5"/>
+<wire x1="335.28" y1="91.44" x2="342.9" y2="91.44" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP6"/>
+<wire x1="342.9" y1="91.44" x2="342.9" y2="88.9" width="0.1524" layer="91"/>
+<wire x1="342.9" y1="88.9" x2="378.46" y2="88.9" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$138" class="0">
+<segment>
+<pinref part="SV16" gate="G$1" pin="4"/>
+<wire x1="335.28" y1="93.98" x2="345.44" y2="93.98" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="GP5"/>
+<wire x1="345.44" y1="93.98" x2="345.44" y2="91.44" width="0.1524" layer="91"/>
+<wire x1="345.44" y1="91.44" x2="378.46" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$139" class="0">
+<segment>
+<pinref part="D3" gate="1" pin="A"/>
+<pinref part="R9" gate="G$1" pin="1"/>
+<wire x1="485.14" y1="215.9" x2="485.14" y2="226.06" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$147" class="0">
+<segment>
+<pinref part="D4" gate="1" pin="A"/>
+<pinref part="R10" gate="G$1" pin="1"/>
+<wire x1="490.22" y1="223.52" x2="490.22" y2="238.76" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$148" class="0">
+<segment>
+<pinref part="D5" gate="1" pin="A"/>
+<pinref part="R11" gate="G$1" pin="1"/>
+<wire x1="495.3" y1="215.9" x2="495.3" y2="226.06" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$151" class="0">
+<segment>
+<pinref part="D2" gate="1" pin="C"/>
+<pinref part="K1" gate="1" pin="1"/>
+<wire x1="505.46" y1="215.9" x2="513.08" y2="215.9" width="0.1524" layer="91"/>
+<wire x1="513.08" y1="215.9" x2="513.08" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="ULN1" gate="G$1" pin="14"/>
+<pinref part="R12" gate="G$1" pin="1"/>
+<wire x1="505.46" y1="187.96" x2="505.46" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="505.46" y1="208.28" x2="515.62" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="505.46" y1="215.9" x2="505.46" y2="208.28" width="0.1524" layer="91"/>
+<junction x="505.46" y="215.9"/>
+<junction x="505.46" y="208.28"/>
+</segment>
+</net>
+<net name="N$152" class="1">
+<segment>
+<pinref part="D2" gate="1" pin="A"/>
+<pinref part="K1" gate="1" pin="2"/>
+<wire x1="513.08" y1="223.52" x2="513.08" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="513.08" y1="226.06" x2="505.46" y2="226.06" width="0.1524" layer="91"/>
 <pinref part="C16" gate="G$1" pin="2"/>
 <wire x1="541.02" y1="187.96" x2="541.02" y2="177.8" width="0.1524" layer="91"/>
 <pinref part="ULN1" gate="G$1" pin="10"/>
@@ -21603,7 +21744,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="548.64" y1="22.86" x2="477.52" y2="22.86" width="0.1524" layer="91"/>
 <junction x="477.52" y="22.86"/>
 <pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="518.16" y1="200.66" x2="548.64" y2="200.66" width="0.1524" layer="91"/>
+<wire x1="520.7" y1="200.66" x2="548.64" y2="200.66" width="0.1524" layer="91"/>
 <wire x1="548.64" y1="200.66" x2="548.64" y2="187.96" width="0.1524" layer="91"/>
 <junction x="548.64" y="187.96"/>
 <pinref part="SV16" gate="G$1" pin="1"/>
@@ -21614,112 +21755,14 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="332.74" y1="71.12" x2="332.74" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="332.74" y1="55.88" x2="355.6" y2="55.88" width="0.1524" layer="91"/>
 <junction x="355.6" y="55.88"/>
-</segment>
-</net>
-<net name="N$140" class="0">
-<segment>
-<pinref part="IC13" gate="A" pin="G"/>
-<pinref part="IC13" gate="A" pin="CLR"/>
-<wire x1="436.88" y1="200.66" x2="439.42" y2="200.66" width="0.1524" layer="91"/>
-<pinref part="ULN1" gate="G$1" pin="15"/>
-<wire x1="439.42" y1="200.66" x2="500.38" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="500.38" y1="200.66" x2="500.38" y2="187.96" width="0.1524" layer="91"/>
-<junction x="439.42" y="200.66"/>
-<pinref part="R7" gate="G$1" pin="1"/>
-<wire x1="500.38" y1="200.66" x2="508" y2="200.66" width="0.1524" layer="91"/>
-<junction x="500.38" y="200.66"/>
-</segment>
-</net>
-<net name="N$146" class="0">
-<segment>
-<pinref part="IC15" gate="A" pin="12C"/>
-<pinref part="IC15" gate="A" pin="34C"/>
-<wire x1="403.86" y1="200.66" x2="406.4" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="406.4" y1="200.66" x2="406.4" y2="170.18" width="0.1524" layer="91"/>
-<wire x1="406.4" y1="170.18" x2="447.04" y2="170.18" width="0.1524" layer="91"/>
-<junction x="406.4" y="200.66"/>
-<pinref part="ULN1" gate="G$1" pin="4"/>
-<wire x1="447.04" y1="73.66" x2="500.38" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="500.38" y1="73.66" x2="500.38" y2="160.02" width="0.1524" layer="91"/>
-<wire x1="447.04" y1="170.18" x2="447.04" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP4"/>
-<wire x1="408.94" y1="73.66" x2="447.04" y2="73.66" width="0.1524" layer="91"/>
-<junction x="447.04" y="73.66"/>
-</segment>
-</net>
-<net name="N$149" class="0">
-<segment>
-<pinref part="D2" gate="1" pin="C"/>
-<pinref part="K1" gate="1" pin="1"/>
-<wire x1="358.14" y1="139.7" x2="345.44" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="345.44" y1="139.7" x2="345.44" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP20"/>
-<wire x1="358.14" y1="139.7" x2="358.14" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="358.14" y1="76.2" x2="378.46" y2="76.2" width="0.1524" layer="91"/>
-<junction x="358.14" y="139.7"/>
-</segment>
-</net>
-<net name="N$124" class="0">
-<segment>
-<pinref part="ULN1" gate="G$1" pin="1"/>
-<wire x1="485.14" y1="160.02" x2="485.14" y2="129.54" width="0.1524" layer="91"/>
-<wire x1="485.14" y1="129.54" x2="363.22" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP19"/>
-<wire x1="363.22" y1="129.54" x2="363.22" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="363.22" y1="78.74" x2="378.46" y2="78.74" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$127" class="0">
-<segment>
-<pinref part="ULN1" gate="G$1" pin="2"/>
-<wire x1="490.22" y1="160.02" x2="490.22" y2="127" width="0.1524" layer="91"/>
-<wire x1="490.22" y1="127" x2="365.76" y2="127" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP26"/>
-<wire x1="365.76" y1="127" x2="365.76" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="365.76" y1="71.12" x2="378.46" y2="71.12" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$129" class="0">
-<segment>
-<pinref part="ULN1" gate="G$1" pin="3"/>
-<wire x1="495.3" y1="160.02" x2="495.3" y2="124.46" width="0.1524" layer="91"/>
-<wire x1="495.3" y1="124.46" x2="368.3" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP12"/>
-<wire x1="368.3" y1="124.46" x2="368.3" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="368.3" y1="86.36" x2="378.46" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$130" class="0">
-<segment>
-<pinref part="SV16" gate="G$1" pin="3"/>
-<wire x1="335.28" y1="96.52" x2="340.36" y2="96.52" width="0.1524" layer="91"/>
-<wire x1="340.36" y1="96.52" x2="340.36" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP13"/>
-<wire x1="340.36" y1="83.82" x2="378.46" y2="83.82" width="0.1524" layer="91"/>
-<pinref part="C18" gate="G$1" pin="+"/>
-<wire x1="340.36" y1="78.74" x2="340.36" y2="83.82" width="0.1524" layer="91"/>
-<junction x="340.36" y="83.82"/>
-<wire x1="340.36" y1="83.82" x2="332.74" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="332.74" y1="83.82" x2="332.74" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="R8" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="N$137" class="0">
-<segment>
-<pinref part="SV16" gate="G$1" pin="5"/>
-<wire x1="335.28" y1="91.44" x2="342.9" y2="91.44" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP6"/>
-<wire x1="342.9" y1="91.44" x2="342.9" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="342.9" y1="88.9" x2="378.46" y2="88.9" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$138" class="0">
-<segment>
-<pinref part="SV16" gate="G$1" pin="4"/>
-<wire x1="335.28" y1="93.98" x2="345.44" y2="93.98" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="GP5"/>
-<wire x1="345.44" y1="93.98" x2="345.44" y2="91.44" width="0.1524" layer="91"/>
-<wire x1="345.44" y1="91.44" x2="378.46" y2="91.44" width="0.1524" layer="91"/>
+<pinref part="R12" gate="G$1" pin="2"/>
+<wire x1="525.78" y1="208.28" x2="548.64" y2="208.28" width="0.1524" layer="91"/>
+<wire x1="548.64" y1="208.28" x2="548.64" y2="200.66" width="0.1524" layer="91"/>
+<junction x="548.64" y="200.66"/>
+<wire x1="513.08" y1="226.06" x2="548.64" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="548.64" y1="226.06" x2="548.64" y2="208.28" width="0.1524" layer="91"/>
+<junction x="513.08" y="226.06"/>
+<junction x="548.64" y="208.28"/>
 </segment>
 </net>
 </nets>

@@ -57,9 +57,16 @@ int mod(int a, int b) {
 /***********************************************************
 *  PIR & RELAY FUNCTIONS
 ***********************************************************/
-void PIR(void)
+void pirISR(void)
 {
-    printf("PIR\n");
+  if ( digitalRead(PIR_PIN) == HIGH ) {
+    digitalWrite(RELAY_PIN, HIGH);
+    printf("PIR_on\n");
+  }
+  else {
+    digitalWrite(RELAY_PIN, LOW);
+    printf("PIR_off\n");
+  }
 }
 
 /***********************************************************
@@ -86,7 +93,7 @@ PI_THREAD (rotaryDeal)
       flag = 1;
     }
 
-    if(flag == 1){
+    if(enableLed && flag == 1){
       flag = 0;
 
       if((Last_RoB_Status == 0)&&(Current_RoB_Status == 1)){
@@ -197,7 +204,7 @@ void initWiringPi() {
 
   pullUpDnControl(PIR_PIN, PUD_UP);
 
-  if(wiringPiISR(PIR_PIN, INT_EDGE_RISING, &PIR) < 0){
+  if(wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &pirISR) < 0){
     fprintf(stderr, "Unable to init ISR\n");
     exit(1);
   }
