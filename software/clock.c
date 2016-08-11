@@ -143,7 +143,6 @@ void nixiePin(int pin, int value){
 }
 
 void nixiePins(int value, int address){
-  digitalWrite(STROBE_PIN, LOW);
 
   nixiePin(ADDR_A_PIN, address&1);
   nixiePin(ADDR_B_PIN, address&2);
@@ -156,7 +155,12 @@ void nixiePins(int value, int address){
 
   digitalWrite(STROBE_PIN, HIGH);
 
-  delay (12); //~=85 Hz
+  delay (1);
+
+  digitalWrite(STROBE_PIN, LOW);
+
+  delay (11);
+  //~=85 Hz
 }
 
 void testClock() {
@@ -246,7 +250,9 @@ int main ()
     nixiePins(ntm->tm_sec%10, 0);
 
     stop = clock() / (CLOCKS_PER_SEC / 1000);
-    delay(1000 - (stop-start));
+    int tdelay = 1000 - (stop-start);
+    if (tdelay > 0)
+      delay(1000 - (stop-start));
   }
 
   return 0;

@@ -19859,6 +19859,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <part name="R10" library="rcl" deviceset="R-EU_" device="0204/7" value="100"/>
 <part name="R11" library="rcl" deviceset="R-EU_" device="0204/7" value="100"/>
 <part name="R12" library="rcl" deviceset="R-EU_" device="0204/7" value="10k"/>
+<part name="GND4" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -20102,7 +20103,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <attribute name="MF" x="469.9" y="15.24" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="469.9" y="15.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="R7" gate="G$1" x="515.62" y="200.66"/>
+<instance part="R7" gate="G$1" x="515.62" y="195.58"/>
 <instance part="GND1" gate="1" x="350.52" y="60.96"/>
 <instance part="C18" gate="G$1" x="340.36" y="76.2"/>
 <instance part="R8" gate="G$1" x="332.74" y="76.2" rot="R90"/>
@@ -20110,6 +20111,7 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <instance part="R10" gate="G$1" x="490.22" y="243.84" rot="R90"/>
 <instance part="R11" gate="G$1" x="495.3" y="231.14" rot="R90"/>
 <instance part="R12" gate="G$1" x="520.7" y="208.28"/>
+<instance part="GND4" gate="1" x="457.2" y="200.66" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -20588,6 +20590,11 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="340.36" y1="71.12" x2="340.36" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="340.36" y1="66.04" x2="350.52" y2="66.04" width="0.1524" layer="91"/>
 <junction x="350.52" y="66.04"/>
+</segment>
+<segment>
+<pinref part="IC13" gate="A" pin="CLR"/>
+<wire x1="439.42" y1="200.66" x2="454.66" y2="200.66" width="0.1524" layer="91"/>
+<pinref part="GND4" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$104" class="0">
@@ -21489,16 +21496,14 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 </net>
 <net name="N$140" class="0">
 <segment>
-<pinref part="IC13" gate="A" pin="G"/>
-<pinref part="IC13" gate="A" pin="CLR"/>
-<wire x1="436.88" y1="200.66" x2="439.42" y2="200.66" width="0.1524" layer="91"/>
 <pinref part="ULN1" gate="G$1" pin="15"/>
-<wire x1="439.42" y1="200.66" x2="500.38" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="500.38" y1="200.66" x2="500.38" y2="187.96" width="0.1524" layer="91"/>
-<junction x="439.42" y="200.66"/>
 <pinref part="R7" gate="G$1" pin="1"/>
-<wire x1="500.38" y1="200.66" x2="510.54" y2="200.66" width="0.1524" layer="91"/>
-<junction x="500.38" y="200.66"/>
+<wire x1="500.38" y1="195.58" x2="500.38" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="500.38" y1="195.58" x2="510.54" y2="195.58" width="0.1524" layer="91"/>
+<pinref part="IC13" gate="A" pin="G"/>
+<wire x1="436.88" y1="200.66" x2="436.88" y2="195.58" width="0.1524" layer="91"/>
+<wire x1="436.88" y1="195.58" x2="500.38" y2="195.58" width="0.1524" layer="91"/>
+<junction x="500.38" y="195.58"/>
 </segment>
 </net>
 <net name="N$146" class="0">
@@ -21744,8 +21749,8 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <wire x1="548.64" y1="22.86" x2="477.52" y2="22.86" width="0.1524" layer="91"/>
 <junction x="477.52" y="22.86"/>
 <pinref part="R7" gate="G$1" pin="2"/>
-<wire x1="520.7" y1="200.66" x2="548.64" y2="200.66" width="0.1524" layer="91"/>
-<wire x1="548.64" y1="200.66" x2="548.64" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="520.7" y1="195.58" x2="548.64" y2="195.58" width="0.1524" layer="91"/>
+<wire x1="548.64" y1="195.58" x2="548.64" y2="187.96" width="0.1524" layer="91"/>
 <junction x="548.64" y="187.96"/>
 <pinref part="SV16" gate="G$1" pin="1"/>
 <wire x1="335.28" y1="101.6" x2="355.6" y2="101.6" width="0.1524" layer="91"/>
@@ -21757,8 +21762,8 @@ Footprint designed for Sullins SBH11-NBPC-D20-SM-BK</description>
 <junction x="355.6" y="55.88"/>
 <pinref part="R12" gate="G$1" pin="2"/>
 <wire x1="525.78" y1="208.28" x2="548.64" y2="208.28" width="0.1524" layer="91"/>
-<wire x1="548.64" y1="208.28" x2="548.64" y2="200.66" width="0.1524" layer="91"/>
-<junction x="548.64" y="200.66"/>
+<wire x1="548.64" y1="208.28" x2="548.64" y2="195.58" width="0.1524" layer="91"/>
+<junction x="548.64" y="195.58"/>
 <wire x1="513.08" y1="226.06" x2="548.64" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="548.64" y1="226.06" x2="548.64" y2="208.28" width="0.1524" layer="91"/>
 <junction x="513.08" y="226.06"/>
