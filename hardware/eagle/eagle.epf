@@ -380,8 +380,8 @@ UsedLibrary="/home/oxydo/Eagle-Libraries/SparkFun-Eagle-Libraries/SparkFun-Retir
 
 [Win_1]
 Type="Control Panel"
-Loc="682 283 1481 715"
-State=2
+Loc="149 -14 948 446"
+State=1
 Number=0
 
 [Desktop]
