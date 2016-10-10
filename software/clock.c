@@ -6,6 +6,7 @@
 
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <pthread.h>
 
 /***********************************************************
 *  CONSTANTS
@@ -23,7 +24,7 @@
 #define  ROTARY_B_PIN       22
 #define  ROTARY_SW_PIN      23
 
-#define  LED_RED_PIN	      24
+#define  LED_RED_PIN        24
 #define  LED_GREEN_PIN      25
 #define  LED_BLUE_PIN       26
 
@@ -31,6 +32,8 @@
 #define  RELAY_PIN          28
 #define  UNDEFINED_PIN      29
 
+#define  BLINK_IN_DELAY     400
+#define  BLINK_OUT_DELAY    200
 
 /***********************************************************
 *  GLOBAL VARIABLES
@@ -39,12 +42,16 @@ static volatile int globalCounter = 0 ;
 unsigned char Last_RoB_Status;
 unsigned char Current_RoB_Status;
 
-int enableLed = 0;
+int rencoderEnabled = 0;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+int rencoderUpdated = 0;
+pthread_mutex_t lock_rencoderUpdated = PTHREAD_MUTEX_INITIALIZER;
 
 int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
                       {-1, LED_GREEN_PIN, LED_BLUE_PIN},
                       {LED_RED_PIN, -1, LED_BLUE_PIN} };
-
 
 /***********************************************************
 *  MATHEMATIC FUNCTIONS
@@ -74,7 +81,14 @@ void pirISR(void)
 ***********************************************************/
 void btnISR(void)
 {
-  enableLed = (enableLed == 0);
+  pthread_mutex_lock(&lock);
+
+  rencoderEnabled = (rencoderEnabled == 0);
+
+  if (rencoderEnabled)
+      pthread_cond_broadcast(&cond);
+
+  pthread_mutex_unlock(&lock);
 
   printf("btnISR\n");
 }
@@ -86,6 +100,10 @@ PI_THREAD (rotaryDeal)
 
   while (1) {
 
+    pthread_mutex_lock(&lock);
+    while(!rencoderEnabled) pthread_cond_wait(&cond, &lock);
+    pthread_mutex_unlock(&lock);
+
     Last_RoB_Status = digitalRead(ROTARY_B_PIN);
 
     while(!digitalRead(ROTARY_A_PIN)){
@@ -93,7 +111,7 @@ PI_THREAD (rotaryDeal)
       flag = 1;
     }
 
-    if(enableLed && flag == 1){
+    if(rencoderEnabled && flag == 1){
       flag = 0;
 
       if((Last_RoB_Status == 0)&&(Current_RoB_Status == 1)){
@@ -103,6 +121,10 @@ PI_THREAD (rotaryDeal)
       if((Last_RoB_Status == 1)&&(Current_RoB_Status == 0)){
         globalCounter = mod(--globalCounter, 300);
       }
+
+      pthread_mutex_lock(&lock_rencoderUpdated);
+      rencoderUpdated = 1;
+      pthread_mutex_unlock(&lock_rencoderUpdated);
     }
 
   }
@@ -111,23 +133,45 @@ PI_THREAD (rotaryDeal)
 
 PI_THREAD (rgbLED) {
 
+  int blinkIn = 1;
+  int counter = globalCounter;
+  int pos = counter/100;
+  int channelDecrease = fadeMap[pos][pos];
+  int channelIncrease = fadeMap[pos][mod(pos+1,3)];
+
   while (1) {
 
-    if (enableLed) {
+    if (rencoderEnabled) {
 
-      int counter = globalCounter;
-      int pos = counter/100;
-      int channelDecrease = fadeMap[pos][pos];
-      int channelIncrease = fadeMap[pos][mod(pos+1,3)];
+      counter = globalCounter;
+      pos = counter/100;
+      channelDecrease = fadeMap[pos][pos];
+      channelIncrease = fadeMap[pos][mod(pos+1,3)];
+
+      if (blinkIn) {
+        softPwmWrite(channelIncrease, mod(counter, 100));
+        softPwmWrite(channelDecrease, 100 - mod(counter, 100));
+        delay(BLINK_IN_DELAY);
+      }
+      else {
+        softPwmWrite(LED_RED_PIN, LOW);
+        softPwmWrite(LED_GREEN_PIN, LOW);
+        softPwmWrite(LED_BLUE_PIN, LOW);
+        delay(BLINK_OUT_DELAY);
+      }
+
+      blinkIn = (blinkIn == 0);
+    }
+    else {
 
       softPwmWrite(channelIncrease, mod(counter, 100));
       softPwmWrite(channelDecrease, 100 - mod(counter, 100));
+
+      pthread_mutex_lock(&lock);
+      while(!rencoderEnabled) pthread_cond_wait(&cond, &lock);
+      pthread_mutex_unlock(&lock);
     }
-    else {
-      softPwmWrite(LED_RED_PIN, LOW);
-      softPwmWrite(LED_GREEN_PIN, LOW);
-      softPwmWrite(LED_BLUE_PIN, LOW);
-    }
+
 
   }
 }
@@ -255,5 +299,7 @@ int main ()
       delay(1000 - (stop-start));
   }
 
+  pthread_cond_destroy(&cond);
+  pthread_mutex_destroy(&lock);
   return 0;
 }
