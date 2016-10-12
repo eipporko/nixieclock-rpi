@@ -2,7 +2,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include <wiringPi.h>
 #include <softPwm.h>
@@ -39,15 +39,13 @@
 *  GLOBAL VARIABLES
 ***********************************************************/
 static volatile int globalCounter = 0 ;
-unsigned char Last_RoB_Status;
-unsigned char Current_RoB_Status;
-
+volatile int lastEncoded;
+unsigned char MSB;
+unsigned char LSB;
 int rencoderEnabled = 0;
+
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-
-int rencoderUpdated = 0;
-pthread_mutex_t lock_rencoderUpdated = PTHREAD_MUTEX_INITIALIZER;
 
 int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
                       {-1, LED_GREEN_PIN, LED_BLUE_PIN},
@@ -86,49 +84,28 @@ void btnISR(void)
   rencoderEnabled = (rencoderEnabled == 0);
 
   if (rencoderEnabled)
-      pthread_cond_broadcast(&cond);
+      pthread_cond_signal(&cond);
 
   pthread_mutex_unlock(&lock);
 
   printf("btnISR\n");
 }
 
+void updateEncoder() {
+  if (rencoderEnabled) {
+    int MSB = digitalRead(ROTARY_A_PIN);
+    int LSB = digitalRead(ROTARY_B_PIN);
 
-PI_THREAD (rotaryDeal)
-{
-  unsigned char flag;
+    int encoded = (MSB << 1) | LSB;
+    int sum = (lastEncoded << 2) | encoded;
 
-  while (1) {
+    if(sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
+      globalCounter = mod(++globalCounter, 300);
+    if(sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
+      globalCounter = mod(--globalCounter, 300);
 
-    pthread_mutex_lock(&lock);
-    while(!rencoderEnabled) pthread_cond_wait(&cond, &lock);
-    pthread_mutex_unlock(&lock);
-
-    Last_RoB_Status = digitalRead(ROTARY_B_PIN);
-
-    while(!digitalRead(ROTARY_A_PIN)){
-      Current_RoB_Status = digitalRead(ROTARY_B_PIN);
-      flag = 1;
-    }
-
-    if(rencoderEnabled && flag == 1){
-      flag = 0;
-
-      if((Last_RoB_Status == 0)&&(Current_RoB_Status == 1)){
-        globalCounter = mod(++globalCounter, 300);
-      }
-
-      if((Last_RoB_Status == 1)&&(Current_RoB_Status == 0)){
-        globalCounter = mod(--globalCounter, 300);
-      }
-
-      pthread_mutex_lock(&lock_rencoderUpdated);
-      rencoderUpdated = 1;
-      pthread_mutex_unlock(&lock_rencoderUpdated);
-    }
-
+    lastEncoded = encoded;
   }
-
 }
 
 PI_THREAD (rgbLED) {
@@ -138,6 +115,8 @@ PI_THREAD (rgbLED) {
   int pos = counter/100;
   int channelDecrease = fadeMap[pos][pos];
   int channelIncrease = fadeMap[pos][mod(pos+1,3)];
+
+  clock_t timestamp = clock();
 
   while (1) {
 
@@ -151,16 +130,24 @@ PI_THREAD (rgbLED) {
       if (blinkIn) {
         softPwmWrite(channelIncrease, mod(counter, 100));
         softPwmWrite(channelDecrease, 100 - mod(counter, 100));
-        delay(BLINK_IN_DELAY);
+        delay(10);
       }
       else {
         softPwmWrite(LED_RED_PIN, LOW);
         softPwmWrite(LED_GREEN_PIN, LOW);
         softPwmWrite(LED_BLUE_PIN, LOW);
-        delay(BLINK_OUT_DELAY);
+        delay(10);
       }
 
-      blinkIn = (blinkIn == 0);
+      double t = (clock() - timestamp) / (CLOCKS_PER_SEC / 1000);
+      printf("%lf\n", t);
+      if ((blinkIn && t > BLINK_IN_DELAY) || (!blinkIn && t > BLINK_OUT_DELAY))
+      {
+        blinkIn = (blinkIn == 0);
+        timestamp = clock();
+        printf("CUÑAO\n");
+      }
+
     }
     else {
 
@@ -250,15 +237,20 @@ void initWiringPi() {
     exit(1);
   }
 
-  pullUpDnControl(PIR_PIN, PUD_UP);
-
-  if(wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &pirISR) < 0){
+  if(wiringPiISR(ROTARY_A_PIN, INT_EDGE_BOTH, &updateEncoder) < 0){
     fprintf(stderr, "Unable to init ISR\n");
     exit(1);
   }
 
-  if (piThreadCreate(rotaryDeal) != 0) {
-    printf("Thread didn't start - rotaryDeal");
+  if(wiringPiISR(ROTARY_B_PIN,INT_EDGE_BOTH, &updateEncoder) < 0){
+    fprintf(stderr, "Unable to init ISR\n");
+    exit(1);
+  }
+
+  pullUpDnControl(PIR_PIN, PUD_UP);
+
+  if(wiringPiISR(PIR_PIN, INT_EDGE_BOTH, &pirISR) < 0){
+    fprintf(stderr, "Unable to init ISR\n");
     exit(1);
   }
 
