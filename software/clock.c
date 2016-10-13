@@ -2,7 +2,8 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <time.h>
+#include <math.h>
 
 #include <wiringPi.h>
 #include <softPwm.h>
@@ -50,6 +51,15 @@ pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
                       {-1, LED_GREEN_PIN, LED_BLUE_PIN},
                       {LED_RED_PIN, -1, LED_BLUE_PIN} };
+
+
+/***********************************************************
+*  TIME FUNCTIONS
+***********************************************************/
+static long TimeSpecToMillis(struct timespec* ts)
+{
+  return round( (double)ts->tv_sec * 1000 + (double)ts->tv_nsec / 1000000.0 );
+}
 
 /***********************************************************
 *  MATHEMATIC FUNCTIONS
@@ -116,18 +126,19 @@ PI_THREAD (rgbLED) {
   int channelDecrease = fadeMap[pos][pos];
   int channelIncrease = fadeMap[pos][mod(pos+1,3)];
 
-  clock_t timestamp = clock();
+  struct timespec timestamp, now;
+  clock_gettime(CLOCK_MONOTONIC, &timestamp);
 
   while (1) {
 
     if (rencoderEnabled) {
 
-      counter = globalCounter;
-      pos = counter/100;
-      channelDecrease = fadeMap[pos][pos];
-      channelIncrease = fadeMap[pos][mod(pos+1,3)];
-
       if (blinkIn) {
+        counter = globalCounter;
+        pos = counter/100;
+        channelDecrease = fadeMap[pos][pos];
+        channelIncrease = fadeMap[pos][mod(pos+1,3)];
+
         softPwmWrite(channelIncrease, mod(counter, 100));
         softPwmWrite(channelDecrease, 100 - mod(counter, 100));
         delay(10);
@@ -139,13 +150,12 @@ PI_THREAD (rgbLED) {
         delay(10);
       }
 
-      double t = (clock() - timestamp) / (CLOCKS_PER_SEC / 1000);
-      printf("%lf\n", t);
+      clock_gettime(CLOCK_MONOTONIC, &now);
+      long t = TimeSpecToMillis(&now) - TimeSpecToMillis(&timestamp);
       if ((blinkIn && t > BLINK_IN_DELAY) || (!blinkIn && t > BLINK_OUT_DELAY))
       {
         blinkIn = (blinkIn == 0);
-        timestamp = clock();
-        printf("CUÑAO\n");
+        clock_gettime(CLOCK_MONOTONIC, &timestamp);
       }
 
     }
@@ -264,7 +274,7 @@ void initWiringPi() {
 int main ()
 {
   time_t now;
-  clock_t start, stop;
+  struct timespec start, end;
 
   struct tm * ntm;
 
@@ -273,7 +283,7 @@ int main ()
   testClock();
 
   while(1) {
-    start = clock() / (CLOCKS_PER_SEC / 1000);
+    clock_gettime(CLOCK_MONOTONIC, &start);
     time (&now);
     ntm = localtime (&now);
     printf ("%d : %d : %d \n", ntm->tm_hour, ntm->tm_min, ntm->tm_sec);
@@ -285,10 +295,11 @@ int main ()
     nixiePins(ntm->tm_sec/10, 1);
     nixiePins(ntm->tm_sec%10, 0);
 
-    stop = clock() / (CLOCKS_PER_SEC / 1000);
-    int tdelay = 1000 - (stop-start);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    long duration = TimeSpecToMillis(&start) - TimeSpecToMillis(&end);
+    int tdelay = 1000 - duration;
     if (tdelay > 0)
-      delay(1000 - (stop-start));
+      delay(1000 - duration );
   }
 
   pthread_cond_destroy(&cond);
