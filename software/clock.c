@@ -35,10 +35,13 @@
 
 #define  BLINK_IN_DELAY     400
 #define  BLINK_OUT_DELAY    200
+#define  COUNTDOWN_TIMER    3600000
+
 
 /***********************************************************
 *  GLOBAL VARIABLES
 ***********************************************************/
+//Rotary Encoder
 static volatile int globalCounter = 0 ;
 volatile int lastEncoded;
 unsigned char MSB;
@@ -47,9 +50,14 @@ int rencoderEnabled = 0;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 int rencoderUpdated = 0;
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+//Relay Countdown Timer
+pthread_mutex_t lockCountdown = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condCountdown = PTHREAD_COND_INITIALIZER;
+int countdownTimer = 0;
 
+//RGB Led
+pthread_mutex_t lockRGBLed = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condRGBLed = PTHREAD_COND_INITIALIZER;
 int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
                       {-1, LED_GREEN_PIN, LED_BLUE_PIN},
                       {LED_RED_PIN, -1, LED_BLUE_PIN} };
@@ -63,6 +71,7 @@ static long timeSpecToMillis(struct timespec* ts)
   return round( (double)ts->tv_sec * 1000 + (double)ts->tv_nsec / 1000000.0 );
 }
 
+
 /***********************************************************
 *  MATHEMATIC FUNCTIONS
 ***********************************************************/
@@ -71,6 +80,7 @@ int mod(int a, int b) {
   return r < 0 ? r + b : r;
 }
 
+
 /***********************************************************
 *  PIR & RELAY FUNCTIONS
 ***********************************************************/
@@ -78,28 +88,42 @@ void pirISR(void)
 {
   if ( digitalRead(PIR_PIN) == HIGH ) {
     digitalWrite(RELAY_PIN, HIGH);
-    printf("PIR_on\n");
-  }
-  else {
-    digitalWrite(RELAY_PIN, LOW);
-    printf("PIR_off\n");
+    pthread_mutex_lock(&lockCountdown);
+    countdownTimer = COUNTDOWN_TIMER;
+    pthread_cond_signal(&condCountdown);
+    pthread_mutex_unlock(&lockCountdown);
   }
 }
+
+PI_THREAD (relayCountdownTimer) {
+    while(1) {
+        delay(100);
+        pthread_mutex_lock(&lockCountdown);
+        countdownTimer -= 100;
+        pthread_mutex_unlock(&lockCountdown);
+        if (countdownTimer <= 0) {
+            digitalWrite(RELAY_PIN, LOW);
+            pthread_mutex_lock(&lockCountdown);
+            while(countdownTimer <= 0) pthread_cond_wait(&condCountdown, &lockCountdown);
+            pthread_mutex_unlock(&lockCountdown);
+        }
+
+    }
+}
+
 
 /***********************************************************
 *  ROTARY ENCODER & RGB LED FUNCTIONS
 ***********************************************************/
 void btnISR(void)
 {
-  pthread_mutex_lock(&lock);
+  pthread_mutex_lock(&lockRGBLed);
 
   rencoderEnabled = (rencoderEnabled == 0);
   if (rencoderEnabled)
-      pthread_cond_signal(&cond);
+      pthread_cond_signal(&condRGBLed);
 
-  pthread_mutex_unlock(&lock);
-
-  printf("btnISR\n");
+  pthread_mutex_unlock(&lockRGBLed);
 }
 
 void updateEncoder() {
@@ -179,9 +203,9 @@ PI_THREAD (rgbLED) {
       softPwmWrite(channelIncrease, mod(counter, 100));
       softPwmWrite(channelDecrease, 100 - mod(counter, 100));
 
-      pthread_mutex_lock(&lock);
-      while(!rencoderEnabled) pthread_cond_wait(&cond, &lock);
-      pthread_mutex_unlock(&lock);
+      pthread_mutex_lock(&lockRGBLed);
+      while(!rencoderEnabled) pthread_cond_wait(&condRGBLed, &lockRGBLed);
+      pthread_mutex_unlock(&lockRGBLed);
     }
 
 
@@ -283,6 +307,11 @@ void initWiringPi() {
     exit(1);
   }
 
+  if (piThreadCreate(relayCountdownTimer) != 0) {
+    printf("Thread didn't start - countdownTimer");
+    exit(1);
+  }
+
   if (piThreadCreate(rgbLED) != 0) {
     printf("Thread didn't start - rgbLED");
     exit(1);
@@ -315,13 +344,16 @@ int main ()
     nixiePins(ntm->tm_sec%10, 0);
 
     clock_gettime(CLOCK_MONOTONIC, &end);
-    long duration = timeSpecToMillis(&start) - timeSpecToMillis(&end);
+    int duration = timeSpecToMillis(&end) - timeSpecToMillis(&start);
     int tdelay = 1000 - duration;
     if (tdelay > 0)
-      delay(1000 - duration );
+      delay(tdelay);
   }
 
-  pthread_cond_destroy(&cond);
-  pthread_mutex_destroy(&lock);
+  pthread_cond_destroy(&condRGBLed);
+  pthread_mutex_destroy(&lockRGBLed);
+  pthread_cond_destroy(&condCountdown);
+  pthread_mutex_destroy(&lockCountdown);
+  pthread_mutex_destroy(&mutex);
   return 0;
 }
