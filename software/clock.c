@@ -44,6 +44,8 @@ volatile int lastEncoded;
 unsigned char MSB;
 unsigned char LSB;
 int rencoderEnabled = 0;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+int rencoderUpdated = 0;
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -56,7 +58,7 @@ int fadeMap[3][3] = { {LED_RED_PIN, LED_GREEN_PIN, -1},
 /***********************************************************
 *  TIME FUNCTIONS
 ***********************************************************/
-static long TimeSpecToMillis(struct timespec* ts)
+static long timeSpecToMillis(struct timespec* ts)
 {
   return round( (double)ts->tv_sec * 1000 + (double)ts->tv_nsec / 1000000.0 );
 }
@@ -92,7 +94,6 @@ void btnISR(void)
   pthread_mutex_lock(&lock);
 
   rencoderEnabled = (rencoderEnabled == 0);
-
   if (rencoderEnabled)
       pthread_cond_signal(&cond);
 
@@ -115,6 +116,10 @@ void updateEncoder() {
       globalCounter = mod(--globalCounter, 300);
 
     lastEncoded = encoded;
+
+    pthread_mutex_lock(&mutex);
+    rencoderUpdated = 1;
+    pthread_mutex_unlock(&mutex);
   }
 }
 
@@ -134,13 +139,19 @@ PI_THREAD (rgbLED) {
     if (rencoderEnabled) {
 
       if (blinkIn) {
-        counter = globalCounter;
-        pos = counter/100;
-        channelDecrease = fadeMap[pos][pos];
-        channelIncrease = fadeMap[pos][mod(pos+1,3)];
+        if (rencoderUpdated) {
+          counter = globalCounter;
+          pos = counter/100;
+          channelDecrease = fadeMap[pos][pos];
+          channelIncrease = fadeMap[pos][mod(pos+1,3)];
 
-        softPwmWrite(channelIncrease, mod(counter, 100));
-        softPwmWrite(channelDecrease, 100 - mod(counter, 100));
+          softPwmWrite(channelIncrease, mod(counter, 100));
+          softPwmWrite(channelDecrease, 100 - mod(counter, 100));
+
+          pthread_mutex_lock(&mutex);
+          rencoderUpdated = 0;
+          pthread_mutex_unlock(&mutex);
+        }
         delay(10);
       }
       else {
@@ -148,10 +159,14 @@ PI_THREAD (rgbLED) {
         softPwmWrite(LED_GREEN_PIN, LOW);
         softPwmWrite(LED_BLUE_PIN, LOW);
         delay(10);
+
+        pthread_mutex_lock(&mutex);
+        rencoderUpdated = 1;
+        pthread_mutex_unlock(&mutex);
       }
 
       clock_gettime(CLOCK_MONOTONIC, &now);
-      long t = TimeSpecToMillis(&now) - TimeSpecToMillis(&timestamp);
+      long t = timeSpecToMillis(&now) - timeSpecToMillis(&timestamp);
       if ((blinkIn && t > BLINK_IN_DELAY) || (!blinkIn && t > BLINK_OUT_DELAY))
       {
         blinkIn = (blinkIn == 0);
@@ -215,6 +230,10 @@ void testClock() {
   }
 }
 
+
+/***********************************************************
+*  SETUP FUNCTIONS
+***********************************************************/
 void initWiringPi() {
 
   if(wiringPiSetup() < 0){
@@ -296,7 +315,7 @@ int main ()
     nixiePins(ntm->tm_sec%10, 0);
 
     clock_gettime(CLOCK_MONOTONIC, &end);
-    long duration = TimeSpecToMillis(&start) - TimeSpecToMillis(&end);
+    long duration = timeSpecToMillis(&start) - timeSpecToMillis(&end);
     int tdelay = 1000 - duration;
     if (tdelay > 0)
       delay(1000 - duration );
