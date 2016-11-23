@@ -31,7 +31,7 @@
 
 #define  PIR_PIN            27
 #define  RELAY_PIN          28
-#define  UNDEFINED_PIN      29
+#define  AUTO_PIN           29
 
 #define  BLINK_IN_DELAY     400
 #define  BLINK_OUT_DELAY    200

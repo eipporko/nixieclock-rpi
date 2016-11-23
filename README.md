@@ -37,6 +37,7 @@ Each latch is multiplexed, with one 3-line to 8-line demux with latch (74HCT259)
 In this way it's only needed 8 bits to control the clock's display.
 
 ```
+** RPI GPIO HEADER SCHEMATIC **
                             .___.
                    +3V3---1-|O O|--2--+5V
            (SDA)  GPIO2---3-|O O|--4--+5V
