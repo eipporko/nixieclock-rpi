@@ -265,7 +265,6 @@ UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/recom-international.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/rectifier.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/ref-packages-longpad.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/ref-packages.lbr"
-UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/relay.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/renesas.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/resistor-bourns.lbr"
 UsedLibrary="/home/oxydo/eagle-7.2.0/lbr/resistor-dil.lbr"
@@ -381,7 +380,7 @@ UsedLibrary="/home/oxydo/Eagle-Libraries/Adafruit-Eagle-Library/adafruit.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="105 83 904 515"
+Loc="55 33 854 465"
 State=2
 Number=0
 

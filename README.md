@@ -19,6 +19,7 @@ Main components
  * MH74141 Nixie driver
  * 74HCT259 8-bit addressable latch
  * SN74LS77 4-bit D latch
+ * ULN2803A Eight Darligton array
  * Raspberry Pi Zero, 1, 2 or 3 (Models B, B+)
 
 The BCD decoder IC and Nixie tubes is hard to obtain, so far they're only
@@ -28,11 +29,13 @@ Check the schematics for the rest of the passives
 
 ## Theory of operation
 
-
 ### Architecture
-Every digit of the display is composed by a Nixie tube (IN-8-2) driven by a decimal decoder designed for directly drive this kind of gas-filled cold-cathode indicators (MH74141) which input is supplied by a 4-bit D Latch (SN74LS77).
+Every digit of the display is composed by a Nixie tube (IN-8-2) driven by a
+decimal decoder designed for directly drive this kind of gas-filled cold-cathode
+indicators (MH74141) which input is supplied by a 4-bit D Latch (SN74LS77).
 
-Each latch is multiplexed, with one 3-line to 8-line demux with latch (74HCT259), in order to share the 4 bit bus with all the drivers.
+Each latch is multiplexed, with one 3-line to 8-line demux with latch (74HCT259),
+in order to share the 4 bit bus with all the drivers.
 
 In this way it's only needed 8 bits to control the clock's display.
 
@@ -72,3 +75,13 @@ In this way it's only needed 8 bits to control the clock's display.
         '---------------------------------------'
 
 ```
+
+## Installation
+
+### Configuring GPIO
+```
+sudo raspi-config
+```
+###
+
+### Build clock
