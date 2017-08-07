@@ -377,10 +377,12 @@ UsedLibrary="/home/oxydo/Eagle-Libraries/Eagle-Libraries/Relays/relay_meder.lbr"
 UsedLibrary="/home/oxydo/Eagle-Libraries/Texas Instruments/Texas Instruments_By_element14_Batch_1.lbr"
 UsedLibrary="/home/oxydo/Eagle-Libraries/SparkFun-Eagle-Libraries/SparkFun-Retired.lbr"
 UsedLibrary="/home/oxydo/Eagle-Libraries/Adafruit-Eagle-Library/adafruit.lbr"
+UsedLibrary="/home/oxydo/Eagle-Libraries/Eagle-Libraries/Vacuum Tubes/tubes.lbr"
+UsedLibrary="/home/oxydo/Eagle-Libraries/DIYModules/Tubes.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="55 33 854 465"
+Loc="113 102 912 534"
 State=2
 Number=0
 
